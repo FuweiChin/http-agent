@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<OpenSearchDescription xmlns="http://a9.com/-/spec/opensearch/1.1/">
+	<ShortName>HTTP Download Agent</ShortName>
+	<Description>Use VPS Proxy(in HongKong) to download resources out of the G.F.W.</Description>
+	<Tags>Proxy Download</Tags>
+	<Contact>fuweichin@gmail.com</Contact>
+	<Image type="image/x-icon">http://proxy.bldgos.net/favicon.ico</Image>
+	<Url type="text/html" method="GET" template="http://proxy.bldgos.net:8080/get?url={searchTerms}"/>
+</OpenSearchDescription>

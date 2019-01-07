@@ -4,6 +4,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.List;
@@ -28,7 +30,6 @@ public class GetServlet extends HttpServlet {
 		super.init();
 		ignoreRequestHeaderNames.add("Connection");
 		ignoreRequestHeaderNames.add("Upgrade-Insecure-Requests");
-		
 		ignoreResponseHeaderNames.add("Connection");
 	}
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
@@ -36,6 +37,9 @@ public class GetServlet extends HttpServlet {
 		if(url==null) {
 			response.sendError(HttpServletResponse.SC_BAD_REQUEST);
 			return;
+		}
+		if(url.startsWith("web+http:")||url.startsWith("web+https:")){
+			url=url.substring("web+".length());
 		}
 		URL urlObj=new URL(url);
 		HttpURLConnection conn=(HttpURLConnection)urlObj.openConnection();
@@ -47,6 +51,7 @@ public class GetServlet extends HttpServlet {
 				conn.setRequestProperty(name, request.getHeader(name));
 			}
 		}
+		conn.setRequestProperty("Connection", "close");
 		//response
 		response.setStatus(conn.getResponseCode());
 		for(Map.Entry<String,List<String>> e:conn.getHeaderFields().entrySet()) {
@@ -54,6 +59,15 @@ public class GetServlet extends HttpServlet {
 			if(!ignoreResponseHeaderNames.contains(name)) {
 				String value=e.getValue().get(0);
 				response.setHeader(name, value);
+			}
+		}
+		String contentDisposition=response.getHeader("Content-Disposition");
+		if(contentDisposition==null) {
+			String filename=urlObj.getPath().substring(urlObj.getPath().lastIndexOf("/")+1);
+			if(filename.length()>0) {
+				String iso_8859_1_enc=new String(filename.getBytes(StandardCharsets.UTF_8),StandardCharsets.ISO_8859_1);
+				String rfc_5987_enc=URLEncoder.encode(filename, "UTF-8").replace("+", "%20");
+				response.setHeader("Content-Disposition", "attachment; filename=\""+iso_8859_1_enc+"\"; filename*=UTF-8''"+rfc_5987_enc);
 			}
 		}
 		try(InputStream input=conn.getInputStream();

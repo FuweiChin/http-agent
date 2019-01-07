@@ -4,7 +4,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>net.bldgos</groupId>
 	<artifactId>http-download-agent</artifactId>
-	<version>0.1.0</version>
+	<version>0.2.0</version>
 	<packaging>war</packaging>
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -50,7 +50,7 @@
 				<configuration>
 					<server>qin-tomcat-application-manager</server>
 					<url>http://proxy.bldgos.net:8080/manager/text</url>
-					<path>/</path>
+					<path>/ROOT##0.2.0</path>
 				</configuration>
 			</plugin>
 		</plugins>
